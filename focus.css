@@ -5,9 +5,9 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, sans-serif;
   background: #0f172a;
-  color: #fff;
+  color: white;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -20,9 +20,9 @@ body {
   background: #1e293b;
   padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
+/* HEADER */
 .app__header {
   text-align: center;
   margin-bottom: 20px;
@@ -33,10 +33,10 @@ body {
   color: #94a3b8;
 }
 
+/* INPUT */
 .task-input {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .task-input input {
@@ -51,12 +51,22 @@ body {
   padding: 10px 15px;
   border: none;
   background: #38bdf8;
-  color: #000;
+  color: black;
   border-radius: 8px;
   cursor: pointer;
 }
 
+/* 🔴 ERROR MESSAGE */
+.error-message {
+  margin-top: 8px;
+  color: #f87171;
+  font-size: 0.9rem;
+  min-height: 18px; /* keeps space even when empty */
+}
+
+/* TASK LIST */
 .task-container {
+  margin-top: 20px;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -68,12 +78,10 @@ body {
 #taskList li {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   background: #334155;
   padding: 10px;
   border-radius: 8px;
   margin-bottom: 10px;
-  transition: 0.3s;
 }
 
 .completed {
@@ -81,9 +89,9 @@ body {
   opacity: 0.5;
 }
 
+/* BUTTON */
 .controls {
   margin-top: 15px;
-  text-align: center;
 }
 
 .controls button {
@@ -95,11 +103,8 @@ body {
   cursor: pointer;
 }
 
+/* 📱 RESPONSIVE */
 @media (max-width: 480px) {
-  .app {
-    padding: 15px;
-  }
-
   .task-input {
     flex-direction: column;
   }
