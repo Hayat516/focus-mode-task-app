@@ -30,5 +30,18 @@ export function addTask() {
 }
 
 export function loadTask() {
-    
+    let tasks = localStorage.getItem("tasks");
+
+    if (!tasks) {
+        return;
+    }
+    else{
+        tasks = JSON.parse(tasks);
+
+        tasks.forEach(task => {
+            const refreshTask = document.createElement("li");
+            refreshTask.textContent = task;
+            taskList.appendChild(refreshTask);
+        });
+    }
 }
