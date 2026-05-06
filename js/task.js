@@ -30,18 +30,27 @@ export function addTask() {
 
         const taskText = document.createElement("span");
         taskText.textContent = newTask.text;
+        taskText.classList.add("task-text");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = newTask.completed;
 
         const newIcon = document.createElement("span");
         newIcon.classList.add("fa-solid", "fa-xmark", "delete-icon");
 
-        newIcon.addEventListener("click", deleteTask)
+        newIcon.addEventListener("click", deleteTask);
 
+        newElement.appendChild(checkbox);
         newElement.appendChild(taskText);
         newElement.appendChild(newIcon);
+
 
         taskList.appendChild(newElement);
 
         taskInput.value = ""
+
+        checkbox.addEventListener("change", toggleTask);
     }
 }
 
@@ -49,8 +58,7 @@ export function deleteTask(event) {
     const icon = event.target
     const taskItem = icon.parentElement;
 
-    const taskText = taskItem.firstChild.textContent.trim();
-
+    const taskText = taskItem.children[1].textContent.trim();
     taskItem.remove();
 
     let tasks = localStorage.getItem("tasks");
@@ -61,7 +69,7 @@ export function deleteTask(event) {
         tasks = [];
     }
 
-    const updatedTasks = tasks.filter(task => task !== taskText);
+    const updatedTasks = tasks.filter(task => task.text !== taskText);
 
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
 
@@ -78,13 +86,62 @@ export function loadTask() {
 
         tasks.forEach(task => {
             const refreshTask = document.createElement("li");
-            refreshTask.textContent = task;
+
+            const taskText = document.createElement("span");
+            taskText.textContent = task.text;
+            taskText.classList.add("task-text");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = task.completed;
+
+            if (task.completed) {
+                taskText.classList.add("completed");
+            }
 
             const refreshIcon = document.createElement("span");
-            refreshIcon.classList.add("fa-solid", "fa-xmark", "delete-icon")
+            refreshIcon.classList.add("fa-solid", "fa-xmark", "delete-icon");
 
+            refreshTask.appendChild(checkbox)
+            refreshTask.appendChild(taskText);
             refreshTask.appendChild(refreshIcon)
             taskList.appendChild(refreshTask);
+
+            refreshIcon.addEventListener("click", deleteTask);
+            checkbox.addEventListener("change", toggleTask);
         });
     }
+}
+
+
+function toggleTask(event) {
+
+    const check = event.target;
+    const checkItem = check.parentElement;
+
+    const taskTextElement = checkItem.querySelector(".task-text");
+
+
+    if (check.checked) {
+        taskTextElement.classList.add("completed")
+    } else {
+        taskTextElement.classList.remove("completed");
+    }
+
+    const taskText = taskTextElement.textContent.trim();
+    let tasks = localStorage.getItem("tasks");
+
+    if (tasks) {
+        tasks = JSON.parse(tasks);
+    } else {
+        tasks = [];
+    }
+
+    tasks.forEach(task => {
+        if (task.text === taskText) {
+            task.completed = check.checked;
+        }
+    });
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
