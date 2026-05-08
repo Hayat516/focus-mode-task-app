@@ -82,6 +82,20 @@ body {
   align-items: center;
 }
 
+#focusMessage {
+  display: none;
+  margin-top: 1rem;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #d1d5db;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+}
+
 .completed {
   text-decoration: line-through;
   opacity: 0.5;
@@ -91,7 +105,7 @@ body {
   margin-top: 15px;
 }
 
-i{
+i {
   margin-left: 60px;
 }
 

@@ -1,4 +1,6 @@
-import { errorMessage, taskInput, taskList } from "./dom.js";
+import { addBtn, errorMessage, focusBtn, focusMessage, taskInput, taskList } from "./dom.js";
+
+let isFocusmode = false;
 
 export function addTask() {
     const input = taskInput.value.trim()
@@ -84,7 +86,29 @@ export function loadTask() {
     else {
         tasks = JSON.parse(tasks);
 
-        tasks.forEach(task => {
+        let savedFocus = localStorage.getItem("isFocusmode");
+        isFocusmode = savedFocus ? JSON.parse(savedFocus) : false;
+
+        focusBtn.textContent = isFocusmode ? "⬅️ Exit Focus mode" : "Focus mode";
+
+        let taskToShow;
+
+        if (isFocusmode) {
+            taskToShow = tasks.filter(task => !task.completed);
+            taskInput.style.display = "none";
+            addBtn.style.display = "none";
+            focusMessage.textContent = "Focus Mode is active. Complete your current tasks before adding new ones"
+            focusMessage.style.display = "block";
+        } else {
+            taskToShow = tasks;
+            taskInput.style.display = "block";
+            addBtn.style.display = "block";
+            focusMessage.style.display = "none";
+        }
+
+        taskList.innerHTML = "";
+
+        taskToShow.forEach(task => {
             const refreshTask = document.createElement("li");
 
             const taskText = document.createElement("span");
@@ -102,19 +126,19 @@ export function loadTask() {
             const refreshIcon = document.createElement("span");
             refreshIcon.classList.add("fa-solid", "fa-xmark", "delete-icon");
 
-            refreshTask.appendChild(checkbox)
+            refreshTask.appendChild(checkbox);
             refreshTask.appendChild(taskText);
-            refreshTask.appendChild(refreshIcon)
+            refreshTask.appendChild(refreshIcon);
+
             taskList.appendChild(refreshTask);
 
             refreshIcon.addEventListener("click", deleteTask);
             checkbox.addEventListener("change", toggleTask);
         });
     }
+
 }
-
-
-function toggleTask(event) {
+export function toggleTask(event) {
 
     const check = event.target;
     const checkItem = check.parentElement;
@@ -145,3 +169,76 @@ function toggleTask(event) {
 
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
+
+export function focusMode() {
+    if (isFocusmode) {
+        isFocusmode = false;
+        focusBtn.textContent = "Focus mode";
+    }
+    else {
+        isFocusmode = true;
+        focusBtn.textContent = "⬅️ Exit Focus mode"
+    }
+
+    if (isFocusmode) {
+        taskInput.style.display = "none";
+        addBtn.style.display = "none";
+        focusMessage.textContent = "Focus Mode is active. Complete your current tasks before adding new ones"
+        focusMessage.style.display = "block";
+
+    } else {
+        taskInput.style.display = "block";
+        addBtn.style.display = "block";
+        focusMessage.style.display = "none";
+    }
+
+    localStorage.setItem("isFocusmode", JSON.stringify(isFocusmode));
+
+    let tasks = localStorage.getItem("tasks");
+
+    if (tasks) {
+        tasks = JSON.parse(tasks);
+    } else {
+        tasks = [];
+    }
+
+    let taskToShow;
+
+    if (isFocusmode) {
+        taskToShow = tasks.filter(task => !task.completed);
+    } else {
+        taskToShow = tasks;
+    }
+
+    taskList.innerHTML = "";
+
+    taskToShow.forEach(task => {
+        const focusTask = document.createElement("li");
+
+        const taskText = document.createElement("span");
+        taskText.textContent = task.text;
+        taskText.classList.add("task-text");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.completed;
+
+        if (task.completed) {
+            taskText.classList.add("completed");
+        }
+
+        const focusIcon = document.createElement("span");
+        focusIcon.classList.add("fa-solid", "fa-xmark", "delete-icon");
+
+        focusTask.appendChild(checkbox)
+        focusTask.appendChild(taskText);
+        focusTask.appendChild(focusIcon)
+        taskList.appendChild(focusTask);
+
+        focusIcon.addEventListener("click", deleteTask);
+        checkbox.addEventListener("change", toggleTask);
+
+    });
+}
+
+focusBtn.addEventListener("click", focusMode)
