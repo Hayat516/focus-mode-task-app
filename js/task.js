@@ -42,6 +42,7 @@ export function addTask() {
         newIcon.classList.add("fa-solid", "fa-xmark", "delete-icon");
 
         newIcon.addEventListener("click", deleteTask);
+        checkbox.addEventListener("change", toggleTask);
 
         newElement.appendChild(checkbox);
         newElement.appendChild(taskText);
@@ -52,7 +53,6 @@ export function addTask() {
 
         taskInput.value = ""
 
-        checkbox.addEventListener("change", toggleTask);
     }
 }
 
@@ -75,6 +75,18 @@ export function deleteTask(event) {
 
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
 
+
+    if (isFocusmode) {
+
+        const unfinishedTasks = updatedTasks.filter(task => !task.completed);
+
+        if (unfinishedTasks.length === 0) {
+
+            updateFocusMessage(updatedTasks);
+            taskList.innerHTML = "";
+        }
+    }
+
 }
 
 export function loadTask() {
@@ -89,7 +101,7 @@ export function loadTask() {
         let savedFocus = localStorage.getItem("isFocusmode");
         isFocusmode = savedFocus ? JSON.parse(savedFocus) : false;
 
-        focusBtn.textContent = isFocusmode ? "⬅️ Exit Focus mode" : "Focus mode";
+        focusBtn.textContent = isFocusmode ? "Exit Focus mode" : "Focus mode";
 
         let taskToShow;
 
@@ -107,6 +119,8 @@ export function loadTask() {
         }
 
         taskList.innerHTML = "";
+
+        updateFocusMessage(tasks);
 
         taskToShow.forEach(task => {
             const refreshTask = document.createElement("li");
@@ -168,6 +182,52 @@ export function toggleTask(event) {
     });
 
     localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    if (isFocusmode) {
+
+        const unfinishedTasks = tasks.filter(task => task.completed === false);
+
+        taskList.innerHTML = "";
+
+        updateFocusMessage(tasks);
+
+        if (unfinishedTasks.length === 0) {
+            return;
+
+        } else {
+
+            unfinishedTasks.forEach(task => {
+
+                const refreshTask = document.createElement("li");
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = task.completed;
+
+                const taskText = document.createElement("span");
+                taskText.textContent = task.text;
+                taskText.classList.add("task-text");
+
+                if (task.completed) {
+                    taskText.classList.add("completed");
+                }
+
+                const refreshIcon = document.createElement("span");
+                refreshIcon.classList.add("fa-solid", "fa-xmark", "delete-icon");
+
+                checkbox.addEventListener("change", toggleTask);
+                refreshIcon.addEventListener("click", deleteTask);
+
+                refreshTask.appendChild(checkbox);
+                refreshTask.appendChild(taskText);
+                refreshTask.appendChild(refreshIcon);
+
+                taskList.appendChild(refreshTask);
+
+            });
+
+        }
+    }
 }
 
 export function focusMode() {
@@ -177,7 +237,7 @@ export function focusMode() {
     }
     else {
         isFocusmode = true;
-        focusBtn.textContent = "⬅️ Exit Focus mode"
+        focusBtn.textContent = "Exit Focus mode"
     }
 
     if (isFocusmode) {
@@ -211,6 +271,7 @@ export function focusMode() {
     }
 
     taskList.innerHTML = "";
+    updateFocusMessage(tasks);
 
     taskToShow.forEach(task => {
         const focusTask = document.createElement("li");
@@ -242,3 +303,20 @@ export function focusMode() {
 }
 
 focusBtn.addEventListener("click", focusMode)
+
+function updateFocusMessage(tasks) {
+    const unfinishedTasks = tasks.filter(task => !task.completed);
+
+    if (!isFocusmode) {
+        focusMessage.style.display = "none";
+        return;
+    }
+
+    if (unfinishedTasks.length === 0) {
+        focusMessage.textContent = "All tasks completed!";
+        focusMessage.style.display = "block";
+    } else {
+        focusMessage.textContent = "Focus Mode is active. Complete your current tasks before adding new ones";
+        focusMessage.style.display = "block";
+    }
+}
