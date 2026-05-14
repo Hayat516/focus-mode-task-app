@@ -52,6 +52,12 @@ body {
   color: black;
   border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.task-input button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
 .error-message {
@@ -116,6 +122,12 @@ i {
   background: #22c55e;
   border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.controls button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
 .delete-icon {
